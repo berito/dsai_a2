@@ -1,0 +1,1 @@
+This is an assignment for parallel implementation of Game of life using OpenMP library
