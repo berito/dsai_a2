@@ -22,7 +22,7 @@ BUILD_DIR = build
 INCLUDE_FILE = arch
 
 # Source files
-SRC = life.c real_rand.c plot.c timer.c
+SRC = real_rand.c plot.c timer.c life.c
 
 # Object files in the build directory
 OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)
@@ -30,6 +30,8 @@ OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)
 # Libraries and flags
 LDLIBS = -lpthread
 CFLAGS = -g
+CFLAGS = -O2 -fopenmp   # Enable OpenMP and optimization
+LDFLAGS = -fopenmp      # Link with OpenMP support (if needed)
 
 # Target binary
 TARGET = $(BUILD_DIR)/life

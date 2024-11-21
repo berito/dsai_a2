@@ -150,7 +150,19 @@ int main(int argc,char **argv)
 	      nextWorld[i][j] = currWorld[i][j] ? (nn == 2 || nn == 3) : (nn == 3);
 	      population[w_update] += nextWorld[i][j];
             }
-      
+      #pragma omp parallel
+    {
+        // Print the number of threads being used in the parallel region
+        int num_threads = omp_get_num_threads();
+        int thread_id = omp_get_thread_num();
+        
+        if (thread_id == 0) {
+            printf("Number of threads: %d\n", num_threads);
+        }
+
+        // Each thread prints its ID (only once to avoid too much output)
+        printf("Thread %d is processing\n", thread_id);
+    }
       
       /* Pointer Swap : nextWorld <-> currWorld */
       tmesh = nextWorld;
