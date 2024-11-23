@@ -218,7 +218,7 @@ int main(int argc, char **argv)
   save_performance(num_threads, t1 - t0, maxiter);
   printf("Running time for the iterations: %f sec.\n", t1 - t0);
   printf("Press enter to end.\n");
-  getchar();
+  // getchar();
 
   if (gnu != NULL)
     pclose(gnu);
@@ -231,7 +231,7 @@ int main(int argc, char **argv)
 }
 void save_performance(int num_threads, double elapsed_time, int num_iterations)
 {
-  FILE *file = fopen("performance.txt", "a"); // Open file in append mode
+  FILE *file = fopen("performance.csv", "a"); // Open file in append mode
 
   if (file == NULL)
   {
