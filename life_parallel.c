@@ -17,7 +17,7 @@
 #define MATCH(s) (!strcmp(argv[ac], (s)))
 
 int MeshPlot(int t, int m, int n, char **mesh);
-void save_performance(int num_threads, double elapsed_time, int num_iterations);
+// void save_performance(int num_threads, double elapsed_time, int num_iterations);
 
 double real_rand();
 int seed_rand(long sd);
@@ -215,8 +215,9 @@ int main(int argc, char **argv)
     }
   }
   double t1 = getTime();
-  save_performance(num_threads, t1 - t0, maxiter);
-  printf("Running time for the iterations: %f sec.\n", t1 - t0);
+  // save_performance(num_threads, t1 - t0, maxiter);
+  double time_taken=t1-t0;
+  printf("Running time for the iterations: %f sec.\n",time_taken);
   printf("Press enter to end.\n");
   // getchar();
 
@@ -229,22 +230,22 @@ int main(int argc, char **argv)
 
   return (0);
 }
-void save_performance(int num_threads, double elapsed_time, int num_iterations)
-{
-  FILE *file = fopen("performance.csv", "a"); // Open file in append mode
+// void save_performance(int num_threads, double elapsed_time, int num_iterations)
+// {
+//   FILE *file = fopen("performance.csv", "a"); // Open file in append mode
 
-  if (file == NULL)
-  {
-    printf("Error opening file!\n");
-    return;
-  }
-  if (ftell(file) == 0)
-  {
-    fprintf(file, "Num_Threads, Time_Taken(seconds), Num_Iterations\n");
-  }
-  // Write the number of threads, elapsed time, and number of iterations to the file
-  fprintf(file, "%d, %f, %d\n", num_threads, elapsed_time, num_iterations);
+//   if (file == NULL)
+//   {
+//     printf("Error opening file!\n");
+//     return;
+//   }
+//   if (ftell(file) == 0)
+//   {
+//     fprintf(file, "Num_Threads, Time_Taken(seconds), Num_Iterations\n");
+//   }
+//   // Write the number of threads, elapsed time, and number of iterations to the file
+//   fprintf(file, "%d, %f, %d\n", num_threads, elapsed_time, num_iterations);
 
-  // Close the file
-  fclose(file);
-}
+//   // Close the file
+//   fclose(file);
+// }

@@ -15,27 +15,84 @@ if [[ "$MODE" != "parallel" && "$MODE" != "serial" ]]; then
     exit 1
 fi
 
-# Loop over different numbers of threads and iterations
-for threads in 1 2 4 8 16; do
+# Set the output file based on the mode
+if [ "$MODE" == "parallel" ]; then
+    OUTPUT_FILE="data/data_parallel.csv"
+else
+    OUTPUT_FILE="data/data_serial.csv"
+fi
+
+# Check if the file exists and create headers if it's empty
+if [ ! -f "$OUTPUT_FILE" ] || [ ! -s "$OUTPUT_FILE" ]; then
+    if [ "$MODE" == "parallel" ]; then
+        echo "Num_Threads, Time_Taken(seconds), Num_Iterations" > "$OUTPUT_FILE"
+    else
+        echo "Time_Taken(seconds), Num_Iterations" > "$OUTPUT_FILE"
+    fi
+fi
+
+# Loop for serial mode (only iterations)
+if [ "$MODE" == "serial" ]; then
     for iterations in 500 1000 1500 2000; do
-        # Set OMP_NUM_THREADS for parallel execution
-        if [ "$MODE" == "parallel" ]; then
-            export OMP_NUM_THREADS=$threads
-        fi
-        
-        # Choose the correct executable based on the mode
-        if [ "$MODE" == "parallel" ]; then
-            EXEC="./build/life_parallel"
-        else
+        total_time=0
+
+        # Run the program 5 times and calculate the average time for each iteration count
+        for run in {1..5}; do
             EXEC="./build/life_serial"
-        fi
-        
-        # Run the program with the specified parameters
-        $EXEC -n 500 -i $iterations -p 0.2 -d
-        
-        # Optional: Print what the script is running
-        echo "Running in $MODE mode with Threads: $threads, Iterations: $iterations"
+
+            # Run the program with the specified parameters and capture the time output
+            time_output=$($EXEC -n 500 -i $iterations -p 0.2 -d)
+            
+            # Extract the time taken from the program output
+            time_taken=$(echo "$time_output" | grep -oP 'Running time for the iterations: \K[0-9.]+')
+            
+            # Add the time to the total time
+            total_time=$(echo "$total_time + $time_taken" | bc)
+        done
+
+        # Calculate the average time for this iteration count
+        average_time=$(echo "$total_time / 5" | bc -l)
+
+        # Print the average time along with other details
+        echo "Running in $MODE mode, Iterations: $iterations, Average Time: $average_time sec"
+
+        # Append the performance data to the CSV file
+        echo "$average_time, $iterations" >> "$OUTPUT_FILE"
     done
-done
+fi
+
+# Loop for parallel mode (iterations and threads)
+if [ "$MODE" == "parallel" ]; then
+    for threads in 1 2 4 8 16; do
+        for iterations in 500 1000 1500 2000; do
+            total_time=0
+
+            # Run the program 5 times and calculate the average time for each combination of thread and iteration count
+            for run in {1..5}; do
+                # Set OMP_NUM_THREADS for parallel execution
+                export OMP_NUM_THREADS=$threads
+                EXEC="./build/life_parallel"
+
+                # Run the program with the specified parameters and capture the time output
+                time_output=$($EXEC -n 500 -i $iterations -p 0.2 -d)
+
+                # Extract the time taken from the program output
+                time_taken=$(echo "$time_output" | grep -oP 'Running time for the iterations: \K[0-9.]+')
+
+                # Add the time to the total time
+                total_time=$(echo "$total_time + $time_taken" | bc)
+            done
+
+            # Calculate the average time for this combination of threads and iterations
+            average_time=$(echo "$total_time / 5" | bc -l)
+
+            # Print the average time along with other details
+            echo "Running in $MODE mode with Threads: $threads, Iterations: $iterations, Average Time: $average_time sec"
+
+            # Append the performance data to the CSV file
+            echo "$threads, $average_time, $iterations" >> "$OUTPUT_FILE"
+        done
+    done
+fi
 
 echo "All tests completed."

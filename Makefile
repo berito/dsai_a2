@@ -63,7 +63,7 @@ BUILD_DIR = build
 INCLUDE_FILE = arch
 
 # Source files
-SRC = real_rand.c plot.c timer.c life_parallel.c life_serial.c plotcsv.c
+SRC = real_rand.c plot.c timer.c life_parallel.c life_serial.c
 
 # Object files in the build directory
 OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)
@@ -77,7 +77,7 @@ LDFLAGS = -fopenmp      # Link with OpenMP support (if needed)
 # Target binaries
 TARGET_LIFE = $(BUILD_DIR)/life_parallel
 TARGET_LIFE_SERIAL = $(BUILD_DIR)/life_serial
-TARGET_PLOTCSV = $(BUILD_DIR)/plotcsv
+
 
 # Default target
 all: $(TARGET_LIFE) $(TARGET_LIFE_SERIAL) $(TARGET_PLOTCSV)
@@ -89,10 +89,6 @@ $(TARGET_LIFE): $(BUILD_DIR)/life_parallel.o $(BUILD_DIR)/real_rand.o $(BUILD_DI
 # Build the life_serial executable
 $(TARGET_LIFE_SERIAL): $(BUILD_DIR)/life_serial.o $(BUILD_DIR)/real_rand.o $(BUILD_DIR)/plot.o $(BUILD_DIR)/timer.o | $(BUILD_DIR)
 	$(CC) $(LDFLAGS) -o $@ $(BUILD_DIR)/life_serial.o $(BUILD_DIR)/real_rand.o $(BUILD_DIR)/plot.o $(BUILD_DIR)/timer.o $(LDLIBS)
-
-# Build the life_serial executable
-$(TARGET_PLOTCSV): $(BUILD_DIR)/plotcsv.o $(BUILD_DIR)/real_rand.o $(BUILD_DIR)/plot.o $(BUILD_DIR)/timer.o | $(BUILD_DIR)
-	$(CC) $(LDFLAGS) -o $@ $(BUILD_DIR)/plotcsv.o $(BUILD_DIR)/real_rand.o $(BUILD_DIR)/plot.o $(BUILD_DIR)/timer.o $(LDLIBS)
 
 # Compile source files into object files in the build directory
 $(BUILD_DIR)/%.o: %.c $(INCLUDE_FILE) | $(BUILD_DIR)
