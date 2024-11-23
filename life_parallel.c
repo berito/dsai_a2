@@ -14,6 +14,7 @@
 #include <assert.h>
 #include <string.h>
 #include <omp.h> // OpenMP library for parallelization
+#include <unistd.h> // for usleep
 #define MATCH(s) (!strcmp(argv[ac], (s)))
 
 int MeshPlot(int t, int m, int n, char **mesh);
@@ -34,6 +35,8 @@ static int w_plot = 1;
 
 double getTime();
 extern FILE *gnu;
+
+
 
 int main(int argc, char **argv)
 {

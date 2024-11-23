@@ -21,31 +21,32 @@ if [ "$MODE" == "parallel" ]; then
 else
     OUTPUT_FILE="data/data_serial.csv"
 fi
-
+# Delete the file if it exists and create a new one with a header
+if [ -f "$OUTPUT_FILE" ]; then
+    rm "$OUTPUT_FILE"
+fi
 # Check if the file exists and create headers if it's empty
 if [ ! -f "$OUTPUT_FILE" ] || [ ! -s "$OUTPUT_FILE" ]; then
     if [ "$MODE" == "parallel" ]; then
-        echo "Num_Threads, Time_Taken(seconds), Num_Iterations" > "$OUTPUT_FILE"
+        echo "Num_Threads,Time_Taken(seconds),Num_Iterations" > "$OUTPUT_FILE"
     else
-        echo "Time_Taken(seconds), Num_Iterations" > "$OUTPUT_FILE"
+        echo "Time_Taken(seconds),Num_Iterations" > "$OUTPUT_FILE"
     fi
 fi
 
 # Loop for serial mode (only iterations)
 if [ "$MODE" == "serial" ]; then
-    for iterations in 500 1000 1500 2000; do
+    for iterations in 1000 2000 4000 6000 8000 10000; do
         total_time=0
-
+       
         # Run the program 5 times and calculate the average time for each iteration count
         for run in {1..5}; do
             EXEC="./build/life_serial"
-
             # Run the program with the specified parameters and capture the time output
             time_output=$($EXEC -n 500 -i $iterations -p 0.2 -d)
             
             # Extract the time taken from the program output
             time_taken=$(echo "$time_output" | grep -oP 'Running time for the iterations: \K[0-9.]+')
-            
             # Add the time to the total time
             total_time=$(echo "$total_time + $time_taken" | bc)
         done
@@ -64,7 +65,7 @@ fi
 # Loop for parallel mode (iterations and threads)
 if [ "$MODE" == "parallel" ]; then
     for threads in 1 2 4 8 16; do
-        for iterations in 500 1000 1500 2000; do
+        for iterations in 1000 2000 4000 6000 8000 10000; do
             total_time=0
 
             # Run the program 5 times and calculate the average time for each combination of thread and iteration count

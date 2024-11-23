@@ -168,9 +168,10 @@ int main(int argc,char **argv)
       
     }
     double t1 = getTime(); 
-    printf("Running time for the iterations: %f sec.\n",t1-t0);
+    double time_taken=t1-t0;
+    printf("Running time for the iterations: %f sec.\n",time_taken);
     printf("Press enter to end.\n");
-    getchar();
+    // getchar();
     
     if(gnu != NULL)
       pclose(gnu);
